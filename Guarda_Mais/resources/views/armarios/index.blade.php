@@ -6,6 +6,7 @@
     <title>Sistema de Gerenciamento de Armários</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     @vite(['resources/css/app.css'])
+    @vite(['resources/css/armarios/armario.css'])
 </head>
 <body>
 <header>
@@ -15,11 +16,16 @@
             <h1>Sistema de Armários</h1>
         </div>
         <div class="user-info">
-            <div class="user-avatar">AD</div>
-            <div>
-                <div class="user-name">Admin</div>
-                <div class="user-role">Administrador</div>
-            </div>
+            <div class="user-avatar">{{ substr(Auth::user()->name, 0, 1) }}</div>
+                <div class="user-name">{{ Auth::user()->name }}</div>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <x-dropdown-link :href="route('logout')"
+                                     onclick="event.preventDefault();
+                                                this.closest('form').submit();">
+                        {{ __('Log Out') }}
+                    </x-dropdown-link>
+                </form>
         </div>
     </div>
 </header>
