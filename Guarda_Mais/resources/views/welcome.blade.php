@@ -342,21 +342,6 @@
             letter-spacing: 1px;
         }
 
-        .armario-altura {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.2);
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
         .action-modal {
             position: fixed;
             top: 0;
@@ -665,7 +650,6 @@
                                 <div class="armario {{ $armario->status === 'disponível' ? 'disponivel' : 'ocupado' }}" data-id="{{ $armario->id }}">
                                     <div class="armario-id">{{ $armario->id }}</div>
                                     <div class="armario-status">{{ ucfirst($armario->status) }}</div>
-                                    <div class="armario-altura"></div>
                                 </div>
                             @endforeach
                         </div>
