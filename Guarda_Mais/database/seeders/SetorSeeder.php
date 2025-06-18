@@ -15,7 +15,7 @@ class SetorSeeder extends Seeder
     {
         \DB::table('setores')->insert([
         [
-            'nome' => 'Bloco A',
+            'nome' => 'Bloco D',
             'descricao' => 'Setor localizado no Bloco A',
             'created_at' => now(),
             'updated_at' => now(),

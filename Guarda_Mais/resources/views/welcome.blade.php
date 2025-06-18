@@ -723,136 +723,51 @@
 </div>
 
 <script>
-    document.querySelectorAll('.bloco-card').forEach(card => {
-        card.addEventListener('click', function () {
-            // Remove classe "active" de todos os blocos
-            document.querySelectorAll('.bloco-card').forEach(c => c.classList.remove('active'));
-            // Adiciona classe "active" no clicado
-            this.classList.add('active');
-
-            // Descobre o ID do setor com base no bloco clicado
-            const bloco = this.getAttribute('data-bloco');
-            let setor_id = null;
-
-            // Mapeamento manual: ajuste conforme seu banco
-            if (bloco === 'D') setor_id = 1;
-            if (bloco === 'B') setor_id = 2;
-            if (bloco === 'C') setor_id = 3;
-
-            if (!setor_id) return;
-
-            // Busca os armários do setor via AJAX (fetch)
-            fetch(`/armarios/por-setor/${setor_id}`)
-                .then(res => res.json())
-                .then(data => {
-                    const coluna = document.querySelector('.coluna');
-                    coluna.innerHTML = ''; // limpa armários
-
-                    if (!data.length) {
-                        coluna.innerHTML = '<p>Nenhum armário encontrado.</p>';
-                        return;
-                    }
-
-                    // Reinsere os armários
-                    data.forEach(armario => {
-                        const div = document.createElement('div');
-                        div.classList.add('armario');
-                        div.classList.add(armario.status === 'disponível' ? 'disponivel' : 'ocupado');
-                        div.dataset.id = armario.id;
-                        div.innerHTML = `
-                            <div class="armario-id">${armario.numero}</div>
-                            <div class="armario-status">${armario.status}</div>
-                            <div class="armario-altura"></div>
-                        `;
-                        coluna.appendChild(div);
-                    });
-                });
-        });
-    });
     document.addEventListener('DOMContentLoaded', function () {
-        // Elementos da interface
-        const blocoCards = document.querySelectorAll('.bloco-card');
-        const ladoBtns = document.querySelectorAll('.lado-btn');
+    const blocoCards = document.querySelectorAll('.bloco-card');
+    const ladoBtns = document.querySelectorAll('.lado-btn');
+    const coluna = document.querySelector('.coluna');
+    const modal = document.getElementById('armarioModal');
+    const closeModal = document.getElementById('closeModal');
+    const modalActions = document.getElementById('modalActions');
+    const armarioPreview = document.getElementById('armarioPreview');
+    const tituloBloco = document.getElementById('tituloBloco');
+
+    // 1) Função para adicionar eventos de clique nos armários
+    function adicionarEventosArmarios() {
         const armarios = document.querySelectorAll('.armario');
-        const modal = document.getElementById('armarioModal');
-        const closeModal = document.getElementById('closeModal');
-        const modalActions = document.getElementById('modalActions');
-        const armarioPreview = document.getElementById('armarioPreview');
-
-        // Eventos para trocar de bloco
-        blocoCards.forEach(card => {
-            card.addEventListener('click', function () {
-                const bloco = this.dataset.bloco;
-
-                // Atualizar card ativo
-                blocoCards.forEach(c => c.classList.remove('active'));
-                this.classList.add('active');
-
-                // Atualizar título do bloco
-                document.querySelector('.content-title').innerHTML = `
-                        <i class="fas fa-th-large"></i>
-                        Armários do Bloco ${bloco}
-                    `;
-
-                // Aqui você faria uma requisição para carregar os armários do bloco selecionado
-                console.log(`Carregar armários do Bloco ${bloco}`);
-            });
-        });
-
-        // Eventos para trocar de lado
-        ladoBtns.forEach(btn => {
-            btn.addEventListener('click', function () {
-                const lado = this.dataset.lado;
-
-                // Atualizar botão ativo
-                ladoBtns.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-
-                // Aqui você faria uma requisição para carregar os armários do lado selecionado
-                console.log(`Carregar armários do Lado ${lado}`);
-            });
-        });
-
-        // Eventos para clicar em um armário
         armarios.forEach(armario => {
             armario.addEventListener('click', function () {
                 const status = this.classList.contains('disponivel') ? 'disponivel' : 'ocupado';
                 const id = this.dataset.id;
 
-                // Atualizar preview do armário
                 document.getElementById('previewId').textContent = this.querySelector('.armario-id').textContent;
                 document.getElementById('previewStatus').textContent = this.querySelector('.armario-status').textContent;
-
-                // Atualizar detalhes
-                document.getElementById('detailBloco').textContent = 'D';
-                document.getElementById('detailLado').textContent = '1';
-                document.getElementById('detailFileira').textContent = this.closest('.fileira') ?
-                    this.closest('.fileira').querySelector('.fileira-title').textContent.replace('Fileira ', '') : '1';
-                document.getElementById('detailColuna').textContent = Array.from(this.parentNode.parentNode.children).indexOf(this.parentNode) + 1;
-                document.getElementById('detailAltura').textContent = this.querySelector('.armario-altura').textContent;
                 document.getElementById('detailStatus').textContent = status === 'disponivel' ? 'Disponível' : 'Ocupado';
 
-                // Atualizar visual do preview
+                const blocoAtivo = document.querySelector('.bloco-card.active');
+                const bloco = blocoAtivo ? blocoAtivo.getAttribute('data-bloco') : '?';
+
+                document.getElementById('detailBloco').textContent = bloco;
+                document.getElementById('detailLado').textContent = '1';
+                document.getElementById('detailFileira').textContent = this.closest('.fileira')
+                    ? this.closest('.fileira').querySelector('.fileira-title').textContent.replace('Fileira ', '')
+                    : '1';
+                document.getElementById('detailColuna').textContent = Array.from(this.parentNode.parentNode.children).indexOf(this.parentNode) + 1;
+                document.getElementById('detailAltura').textContent = this.querySelector('.armario-altura').textContent;
+
                 armarioPreview.className = 'armario-preview';
                 armarioPreview.classList.add(status);
 
-                // Criar botões de ação baseados no status
                 modalActions.innerHTML = '';
 
                 if (status === 'disponivel') {
                     const ocuparBtn = document.createElement('button');
                     ocuparBtn.className = 'btn btn-primary';
                     ocuparBtn.innerHTML = '<i class="fas fa-lock"></i> Ocupar Armário';
-                    ocuparBtn.addEventListener('click', function () {
-                        // Aqui você chamaria a API para ocupar o armário
-                        console.log(`Ocupar armário ${id}`);
-
-                        // Atualizar status localmente
-                        armario.classList.remove('disponivel');
-                        armario.classList.add('ocupado');
+                    ocuparBtn.addEventListener('click', () => {
+                        armario.classList.replace('disponivel', 'ocupado');
                         armario.querySelector('.armario-status').textContent = 'Ocupado';
-
-                        // Fechar modal
                         modal.classList.remove('active');
                     });
                     modalActions.appendChild(ocuparBtn);
@@ -860,16 +775,9 @@
                     const liberarBtn = document.createElement('button');
                     liberarBtn.className = 'btn btn-danger';
                     liberarBtn.innerHTML = '<i class="fas fa-lock-open"></i> Liberar Armário';
-                    liberarBtn.addEventListener('click', function () {
-                        // Aqui você chamaria a API para liberar o armário
-                        console.log(`Liberar armário ${id}`);
-
-                        // Atualizar status localmente
-                        armario.classList.remove('ocupado');
-                        armario.classList.add('disponivel');
+                    liberarBtn.addEventListener('click', () => {
+                        armario.classList.replace('ocupado', 'disponivel');
                         armario.querySelector('.armario-status').textContent = 'Disponível';
-
-                        // Fechar modal
                         modal.classList.remove('active');
                     });
                     modalActions.appendChild(liberarBtn);
@@ -878,38 +786,76 @@
                 const cancelarBtn = document.createElement('button');
                 cancelarBtn.className = 'btn btn-secondary';
                 cancelarBtn.innerHTML = '<i class="fas fa-times"></i> Cancelar';
-                cancelarBtn.addEventListener('click', function () {
-                    modal.classList.remove('active');
-                });
+                cancelarBtn.addEventListener('click', () => modal.classList.remove('active'));
                 modalActions.appendChild(cancelarBtn);
 
-                // Mostrar modal
                 modal.classList.add('active');
             });
         });
+    }
 
-        // Fechar modal
-        closeModal.addEventListener('click', function () {
-            modal.classList.remove('active');
-        });
+    // 2) Função para carregar e renderizar armários de um setor
+    function carregarArmarios(setor_id, bloco) {
+        fetch(`/armarios/por-setor/${setor_id}`)
+            .then(res => res.json())
+            .then(data => {
+                coluna.innerHTML = '';
+                if (!data.length) {
+                    coluna.innerHTML = '<p>Nenhum armário encontrado.</p>';
+                } else {
+                    data.forEach(armario => {
+                        const div = document.createElement('div');
+                        div.classList.add('armario', armario.status === 'ocupado' ? 'ocupado' : 'disponivel');
+                        div.dataset.id = armario.id;
+                        div.innerHTML = `
+                            <div class="armario-id">${armario.numero}</div>
+                            <div class="armario-status">${armario.status}</div>
+                            <div class="armario-altura"></div>
+                        `;
+                        coluna.appendChild(div);
+                    });
+                    adicionarEventosArmarios();
+                }
+            });
 
-        // Fechar modal ao clicar fora
-        modal.addEventListener('click', function (e) {
-            if (e.target === modal) {
-                modal.classList.remove('active');
-            }
-        });
-    });
+        // Atualiza o título
+        if (tituloBloco) tituloBloco.textContent = `Armários do Bloco ${bloco}`;
+    }
 
-    const blocoCards = document.querySelectorAll('.bloco-card');
-    const tituloBloco = document.getElementById('tituloBloco');
-
+    // 3) Configura clique nos blocos
     blocoCards.forEach(card => {
-        card.addEventListener('click', () => {
-            const bloco = card.getAttribute('data-bloco');
-            tituloBloco.textContent = `Armários do Bloco ${bloco}`;
+        card.addEventListener('click', function () {
+            blocoCards.forEach(c => c.classList.remove('active'));
+            this.classList.add('active');
+
+            const bloco = this.getAttribute('data-bloco');
+            let setor_id = null;
+            if (bloco === 'D') setor_id = 1;
+            if (bloco === 'B') setor_id = 2;
+
+            if (setor_id) carregarArmarios(setor_id, bloco);
         });
     });
+
+    // 4) Clique nos lados (se houver lógica futura)
+    ladoBtns.forEach(btn => {
+        btn.addEventListener('click', function () {
+            ladoBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            // Você pode inserir código para filtrar por lado aqui
+        });
+    });
+
+    // 5) Fecha modal
+    closeModal.addEventListener('click', () => modal.classList.remove('active'));
+    modal.addEventListener('click', e => {
+        if (e.target === modal) modal.classList.remove('active');
+    });
+
+    // 6) Gatilho inicial: carrega primeiro bloco automaticamente
+    const primeiroBloco = document.querySelector('.bloco-card.active') || document.querySelector('.bloco-card');
+    if (primeiroBloco) primeiroBloco.click();
+});
 </script>
 </body>
 </html>
