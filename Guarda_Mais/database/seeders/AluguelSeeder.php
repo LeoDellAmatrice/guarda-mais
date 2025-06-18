@@ -4,6 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Alunos;
+use App\Models\Armarios;
+use App\Models\Aluguel;
 
 class AluguelSeeder extends Seeder
 {
