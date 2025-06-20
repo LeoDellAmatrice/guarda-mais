@@ -17,15 +17,15 @@
         </div>
         <div class="user-info">
             <div class="user-avatar">{{ substr(Auth::user()->name, 0, 1) }}</div>
-                <div class="user-name">{{ Auth::user()->name }}</div>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <x-dropdown-link :href="route('logout')"
-                                     onclick="event.preventDefault();
+            <div class="user-name">{{ Auth::user()->name }}</div>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <x-dropdown-link :href="route('logout')"
+                                 onclick="event.preventDefault();
                                                 this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-dropdown-link>
-                </form>
+                    {{ __('Log Out') }}
+                </x-dropdown-link>
+            </form>
         </div>
     </div>
 </header>
@@ -79,15 +79,20 @@
 
             <div class="armarios-grid">
                 @forelse($armarios as $armario)
-                    <div class="armario {{ $armario->status === 'disponível' ? 'disponivel' : 'ocupado' }}">
-                        <div class="armario-id">{{ $armario->numero }}</div>
-                        <div class="armario-status">{{ ucfirst($armario->status) }}</div>
 
-                        <!-- Botão para abrir modal (não altera status diretamente) -->
-                        <a href="{{ route('armarios.show', $armario->id) }}" class="btn btn-action">
-                            <i class="fas fa-ellipsis-h"></i> Detalhes
-                        </a>
-                    </div>
+                    <a href="{{ route('armarios.show', $armario->id) }}" class="locker-link" data-id="A101">
+                        <div class="locker locker-{{ $armario->status === 'disponível' ? 'available' : 'occupied' }}">
+                            <div class="locker-top"></div>
+                            <div class="locker-body">
+                                <div class="locker-door">
+                                    <div class="locker-handle"></div>
+                                    <div class="locker-number">{{ $armario->numero }}</div>
+                                </div>
+                            </div>
+                            <div class="locker-base"></div>
+                            <div class="locker-status">{{ $armario->status === 'disponível' ? 'disponivel' : 'ocupado' }}</div>
+                        </div>
+                    </a>
                 @empty
                     <div class="empty-message">
                         <i class="fas fa-info-circle"></i>
@@ -136,7 +141,8 @@
                 </div>
             </div>
             <div>
-                <form class="modal-actions" method="POST" action="{{ route('armarios.alterar-status', $armarioDetalhado->id) }}">
+                <form class="modal-actions" method="POST"
+                      action="{{ route('armarios.alterar-status', $armarioDetalhado->id) }}">
                     @csrf
                     @method('PATCH')
                     <input type="hidden" name="novo_status"

@@ -100,7 +100,6 @@
       <path value="$PROJECT_DIR$/Guarda_Mais/vendor/carbonphp/carbon-doctrine-types" />
       <path value="$PROJECT_DIR$/Guarda_Mais/vendor/fruitcake/php-cors" />
       <path value="$PROJECT_DIR$/Guarda_Mais/vendor/fakerphp/faker" />
-      <path value="$PROJECT_DIR$/Guarda_Mais/vendor/hamcrest/hamcrest-php" />
       <path value="$PROJECT_DIR$/Guarda_Mais/vendor/sebastian/cli-parser" />
       <path value="$PROJECT_DIR$/Guarda_Mais/vendor/sebastian/code-unit" />
       <path value="$PROJECT_DIR$/Guarda_Mais/vendor/phpoption/phpoption" />

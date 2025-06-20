@@ -196,11 +196,6 @@ header {
     color: var(--secondary);
 }
 
-.armarios-container {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 30px;
-}
 
 .fileira {
     background: var(--light);
@@ -305,82 +300,9 @@ header {
 
 .armarios-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 1rem;
     padding: 1rem;
-}
-
-.coluna {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.armario {
-    padding: 30px 10px;
-    height: 130px;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.armario:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 10px;
-    background: rgba(0, 0, 0, 0.1);
-}
-
-.armario.disponivel {
-    background: linear-gradient(to bottom, var(--success), #27ae60);
-    color: white;
-}
-
-.armario.ocupado {
-    background: linear-gradient(to bottom, var(--danger), #c0392b);
-    color: white;
-}
-
-.armario:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-}
-
-.armario-id {
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 5px;
-}
-
-.armario-status {
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.armario-altura {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgba(0, 0, 0, 0.2);
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-    font-weight: bold;
 }
 
 .action-modal {
@@ -570,10 +492,6 @@ header {
     .dashboard {
         grid-template-columns: 1fr;
     }
-
-    .armarios-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
 }
 
 @media (max-width: 576px) {
@@ -583,11 +501,194 @@ header {
         text-align: center;
     }
 
-    .armarios-grid {
-        grid-template-columns: 1fr;
-    }
-
     .modal-actions {
         flex-direction: column;
     }
+}
+
+.locker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 25px;
+    padding: 20px;
+}
+
+.coluna {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Armário como elemento clicável */
+.locker-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    perspective: 1000px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.locker-link:hover {
+    transform: translateY(-8px);
+}
+
+.locker {
+    position: relative;
+    width: 120px;
+    height: 180px;
+    background: linear-gradient(to bottom, #8c8c8c, #6b6b6b);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    border: 2px solid #555;
+    transform-style: preserve-3d;
+}
+
+/* Topo do armário */
+.locker-top {
+    height: 12px;
+    background: linear-gradient(to bottom, #707070, #5a5a5a);
+    border-bottom: 2px solid #444;
+}
+
+/* Corpo principal */
+.locker-body {
+    height: 136px;
+    position: relative;
+    display: flex;
+    border-top: 2px solid #777;
+    border-bottom: 2px solid #444;
+}
+
+/* Porta do armário */
+.locker-door {
+    flex: 1;
+    position: relative;
+    background: linear-gradient(to right, #b1b1b1, #9a9a9a);
+    border-right: 2px solid #666;
+    transition: all 0.5s ease;
+}
+
+/* Maçaneta */
+.locker-handle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #444;
+    border-radius: 50%;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Número do armário */
+.locker-number {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    font-weight: bold;
+    font-size: 1.4rem;
+    color: #333;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+    z-index: 2;
+}
+
+/* Base do armário */
+.locker-base {
+    height: 32px;
+    background: linear-gradient(to top, #707070, #5a5a5a);
+    border-top: 2px solid #444;
+    position: relative;
+}
+
+/* Pés do armário */
+.locker-base::before,
+.locker-base::after {
+    content: '';
+    position: absolute;
+    width: 15px;
+    height: 8px;
+    background: #444;
+    bottom: 0;
+    border-radius: 2px 2px 0 0;
+}
+
+.locker-base::before {
+    left: 20px;
+}
+
+.locker-base::after {
+    right: 20px;
+}
+
+/* STATUS DOS ARMÁRIOS */
+.locker-available .locker-door {
+    background: linear-gradient(to right, #4CAF50, #388E3C);
+    box-shadow: inset 0 0 15px rgba(76, 175, 80, 0.7);
+}
+
+.locker-occupied .locker-door {
+    background: linear-gradient(to right, #F44336, #D32F2F);
+    box-shadow: inset 0 0 15px rgba(244, 67, 54, 0.7);
+}
+
+/* Indicador de status */
+.locker-status {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 12px;
+    color: white;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.locker-available .locker-status {
+    background: rgba(56, 142, 60, 0.9);
+}
+
+.locker-occupied .locker-status {
+    background: rgba(211, 47, 47, 0.9);
+}
+
+/* Detalhes de textura metálica */
+.locker-door::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        linear-gradient(90deg, transparent 50%, rgba(255,255,255,0.1) 50%),
+        linear-gradient(transparent 50%, rgba(0,0,0,0.1) 50%);
+    background-size: 4px 4px;
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+/* Efeito de profundidade */
+.locker-door::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+.locker-available-color {
+    background: linear-gradient(to right, #4CAF50, #388E3C);
+}
+
+.locker-occupied-color {
+    background: linear-gradient(to right, #F44336, #D32F2F);
 }
